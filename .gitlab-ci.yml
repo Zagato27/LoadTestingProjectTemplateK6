@@ -1,0 +1,120 @@
+# .gitlab-ci.yml - Шаблон для запуска нагрузочных тестов k6
+
+variables:
+  # Пример переменной для выбора стенда
+  MY_STAND:
+    value: "DEV"
+    options:
+      - "DEV"
+      - "TEST"
+      - "STAGE"
+      - "PROD"
+    description: "Окружение, на котором запускаются нагрузочные тесты (по умолчанию DEV)."
+
+  # Пример переменной для выбора типа теста
+  MY_TEST_TYPE:
+    value: "RAMPING"
+    options:
+      - "STABLE"
+      - "RAMPING"
+      - "PERF"
+    description: "Тип нагрузочного теста (по умолчанию RAMPING)."
+
+  # Пример переменной для выбора профиля сценариев
+  MY_PROFILE:
+    value: "ALL-HTTP-AND-KAFKA"
+    options:
+      - "ALL-HTTP-AND-KAFKA"
+      - "HTTP-ONLY"
+      - "KAFKA-ONLY"
+    description: "Набор сценариев (профиль) для запуска нагрузочного теста (по умолчанию ALL-HTTP-AND-KAFKA)."
+
+k6_test:
+  stage: test
+  tags:
+    - k6   # (Укажите теги Runner'а, подходящие для вашей инфраструктуры)
+
+  # Эта секция выполняется до запуска основного скрипта
+  before_script:
+    - |
+      # Пример настройки переменных по выбранному стенду (MY_STAND)
+      # Можно расширить эту логику, чтобы при разных окружениях
+      # устанавливать разные URL и т.д.
+
+      if [ "$MY_STAND" == "DEV" ]; then
+        export SERVER_URL="https://dev.server.example"
+        export KAFKA_BROKER_IP="10.0.0.1:9094"
+        export KAFKA_PASSWORD="dev-kafka-password"
+      elif [ "$MY_STAND" == "TEST" ]; then
+        export SERVER_URL="https://test.server.example"
+        export KAFKA_BROKER_IP="10.0.1.2:9094"
+        export KAFKA_PASSWORD="test-kafka-password"
+      elif [ "$MY_STAND" == "PROD" ]; then
+        export SERVER_URL="https://prod.server.example"
+        export KAFKA_BROKER_IP="10.0.3.4:9094"
+        export KAFKA_PASSWORD="prod-kafka-password"
+      else
+        # Значения по умолчанию
+        export SERVER_URL="http://localhost:8080"
+        export KAFKA_BROKER_IP="localhost:9092"
+        export KAFKA_PASSWORD="local-kafka-password"
+      fi
+
+      # Определение сценариев (SCENARIO_CONFIG_PATH) на основе профиля (MY_PROFILE)
+      # и типа теста (MY_TEST_TYPE), если нужно.
+      # Ниже - пример:
+
+      if [ "$MY_PROFILE" == "ALL-HTTP-AND-KAFKA" ]; then
+        export SCENARIO_CONFIG_PATH="config-http,config-kafka"
+      elif [ "$MY_PROFILE" == "HTTP-ONLY" ]; then
+        export SCENARIO_CONFIG_PATH="config-http"
+      elif [ "$MY_PROFILE" == "KAFKA-ONLY" ]; then
+        export SCENARIO_CONFIG_PATH="config-kafka"
+      else
+        export SCENARIO_CONFIG_PATH="config-default"
+      fi
+
+      # Преобразуем MY_TEST_TYPE в TEST_TYPE, если логика требует:
+      if [ "$MY_TEST_TYPE" == "STABLE" ]; then
+        export TEST_TYPE="stable"
+      elif [ "$MY_TEST_TYPE" == "RAMPING" ]; then
+        export TEST_TYPE="ramping"
+      elif [ "$MY_TEST_TYPE" == "PERF" ]; then
+        export TEST_TYPE="perf"
+      else
+        export TEST_TYPE="ramping"
+      fi
+
+  script:
+    - echo "Pipeline ID is $CI_PIPELINE_ID"
+    - echo "Server URL $SERVER_URL"
+    - echo "Kafka Broker $KAFKA_BROKER_IP (password=$KAFKA_PASSWORD)"
+    - echo "Scenario Config Path $SCENARIO_CONFIG_PATH"
+    - echo "Test Type $TEST_TYPE"
+
+
+    # Пример запуска k6
+    # --no-summary --quiet --log-output=none - убрать подробные логи, если хотите "тихий" режим
+    # --insecure-skip-tls-verify - если нужно пропустить проверку TLS
+    # --out influxdb=... - если нужно писать метрики в InfluxDB
+    - k6 run \
+        --no-summary \
+        --quiet \
+        --log-output=none \
+        --insecure-skip-tls-verify \
+        --out influxdb=http://<INFLUX_HOST>:8086/k6 \
+        ./main_test.js \
+        --env STAND="$SERVER_URL" \
+        --env KAFKA_BROKER_IP="$KAFKA_BROKER_IP" \
+        --env KAFKA_PASSWORD="$KAFKA_PASSWORD" \
+        --env SCENARIO_CONFIG_PATH="$SCENARIO_CONFIG_PATH" \
+        --env TEST_TYPE="$TEST_TYPE" &
+
+    - export K6_PID=$!
+
+    # При получении сигнала SIGTERM/SIGINT (например, если пайплайн отменён),
+    # завершаем процесс k6
+    - trap "echo 'Pipeline cancelled. Killing k6 process'; kill $K6_PID" SIGTERM SIGINT EXIT
+
+    # Ожидаем завершения процесса k6
+    - wait $K6_PID

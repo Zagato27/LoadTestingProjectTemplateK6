@@ -1,0 +1,31 @@
+{
+    "address": [
+      {
+        "country": "Россия",
+        "subject": "Московская область",
+        "region": "Подмосковье",
+        "locality": "Видное",
+        "district": "Ленинский",
+        "street": "Советская",
+        "house": "10",
+        "building": "2",
+        "construction": "",
+        "flat": "45",
+        "room": "1"
+      },
+      {
+        "country": "Россия",
+        "subject": "Москва",
+        "region": "Центральный",
+        "locality": "Москва",
+        "district": "",
+        "street": "Арбат",
+        "house": "25",
+        "building": "1",
+        "construction": "4",
+        "flat": "12",
+        "room": ""
+      }
+    ]
+  }
+  

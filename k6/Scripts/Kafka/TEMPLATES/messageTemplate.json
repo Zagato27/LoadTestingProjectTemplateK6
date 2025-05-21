@@ -1,0 +1,19 @@
+{
+    "queryId": "",
+    "loadingId": "",
+    "address": {
+      "country": "",
+      "subject": "",
+      "region": "",
+      "locality": "",
+      "district": "",
+      "street": "",
+      "house": "",
+      "building": "",
+      "construction": "",
+      "flat": "",
+      "room": ""
+    },
+    "incomeStd": ""
+  }
+  
