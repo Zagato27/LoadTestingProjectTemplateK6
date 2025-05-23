@@ -24,6 +24,7 @@ k6 run k6/main_test.js \
   --env STAND="http://mytest.server" \
   --env SCENARIO_CONFIG_PATH="config1" \
   --env TEST_TYPE="ramping"
+```
 ## Запуск в GitLab CI
 Файл .gitlab-ci.yml содержит заготовку для запуска тестов:
 - Считывает переменные окружения STAND, TEST_TYPE, PROFILE.
@@ -35,12 +36,14 @@ k6 run k6/main_test.js \
 1. Добавить бизнес-логику в k6/Scripts/HTTP/httpTest.js (или другой файл).
 2. Создать exec-функцию в allExecs.js, обёрнутую в withAuth(...).
 3. В каком-нибудь scenario-configX.js прописать:
-   
+  ```js 
    myNewOperation: {
      exec: "scr_myNewOperation",
      baseRate: 80,
      // ...
    }
+```
+
 4. Импортируем все exec-функции из 1 пункта в main_test.js
 5. Запустить, указав нужный SCENARIO_CONFIG_PATH и TEST_TYPE.
 
@@ -51,10 +54,10 @@ k6 run k6/main_test.js \
 3. В main_test.js (или где выбираются конфиги) добавьте обработку case "configX":.
 4. Теперь можно вызывать несколько конфигов, через запятую:
    
+```bash
    k6 run k6/Profile/main_test.js --env SCENARIO_CONFIG_PATH="config1,configX"
-   
+  ``` 
 
 ## Поддержка
 
 В случае вопросов по k6 и структуре обращайтесь к документации [k6.io/docs](https://k6.io/docs).
-```
