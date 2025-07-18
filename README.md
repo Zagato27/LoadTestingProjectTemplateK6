@@ -11,7 +11,7 @@
 - **`k6/allExecs.js`**: exec-функции (scr_...) с логикой авторизации (через `withAuth`).
 - **`k6/buildScenarios.js`**: сборка `options.scenarios` на основе типа теста (`ramping|stable|perf`).
 - **`k6/mergeConfigs.js`**: утилита объединения нескольких конфигов (по списку).
-- **`k6/main_test.js`**: главный скрипт k6, который импортирует все конфиги, собирает scenarios, задаёт thresholds и экспортирует exec-функции.
+- **`k6/main_test.js`**: главный скрипт k6. Автоматически ищет файлы в `k6/scenario-configs`, собирает scenarios, задаёт thresholds и экспортирует exec-функции.
 
 ## Запуск локально
 
@@ -51,8 +51,8 @@ k6 run k6/main_test.js \
 
 1. Создайте файл scenario-configX.js в k6/scenario-configs/.
 2. Опишите там свои сценарии.
-3. В main_test.js (или где выбираются конфиги) добавьте обработку case "configX":.
-4. Теперь можно вызывать несколько конфигов, через запятую:
+3. Просто укажите `SCENARIO_CONFIG_PATH="configX"` при запуске (можно перечислить несколько имён через запятую).
+4. main_test.js автоматически найдёт нужные файлы и объединит их:
    
 ```bash
    k6 run k6/Profile/main_test.js --env SCENARIO_CONFIG_PATH="config1,configX"

@@ -1,9 +1,10 @@
 // k6/main_test.js
 
-import scenarioConfig1 from "./scenario-configs/scenario-config1.js";
-import scenarioConfig2 from "./scenario-configs/scenario-config2.js";
 import { mergeConfigs } from "./mergeConfigs.js";
 import { buildScenarios } from "./buildScenarios.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Импортируем все exec-функции
 import {
@@ -25,22 +26,35 @@ const testType = __ENV.TEST_TYPE || "ramping";
 const stand = __ENV.STAND || "";
 
 // Разбиваем configPath (например, "config1,config2") в массив
-const configNames = configPath.split(",").map((s) => s.trim());
-const configsToMerge = [];
+const configNames = configPath.split(",").map((s) => s.trim()).filter(Boolean);
 
-for (const name of configNames) {
-  switch (name) {
-    case "config1":
-      configsToMerge.push(scenarioConfig1);
-      break;
-    case "config2":
-      configsToMerge.push(scenarioConfig2);
-      break;
-    default:
-      throw new Error(`Unknown config name: ${name}`);
-  }
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+function discoverScenarioFiles() {
+  const dir = path.join(__dirname, "scenario-configs");
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".js"))
+    .reduce((acc, file) => {
+      const name = file.replace(/^scenario-/, "").replace(/\.js$/, "");
+      acc[name] = file;
+      return acc;
+    }, {});
 }
 
+async function loadScenarioConfigs(names) {
+  const map = discoverScenarioFiles();
+  const promises = names.map(async (name) => {
+    if (!map[name]) {
+      throw new Error(`Unknown config name: ${name}`);
+    }
+    const module = await import(`./scenario-configs/${map[name]}`);
+    return module.default;
+  });
+  return Promise.all(promises);
+}
+
+const configsToMerge = await loadScenarioConfigs(configNames);
 const mergedConfig = mergeConfigs(configsToMerge);
 
 export let options = {
