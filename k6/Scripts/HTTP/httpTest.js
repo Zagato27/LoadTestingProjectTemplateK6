@@ -132,10 +132,23 @@ export function exampleQueryB() {
         "B status 2xx": (r) => r.status >= 200 && r.status < 300,
       });
   
-      sleep(0.2);
-    });
-  }
-  
+  sleep(0.2);
+  });
+}
+
+// ------------------ WRAPPER FUNCTIONS FOR SCENARIO OPERATIONS ------------------
+export function operationA() {
+  exampleQueryA();
+}
+
+export function operationB() {
+  exampleQueryB();
+}
+
+export function operationC() {
+  exampleQueryB();
+}
+
   // ------------------ СЦЕНАРИЙ ПО УМОЛЧАНИЮ ------------------
   
   export default function () {
