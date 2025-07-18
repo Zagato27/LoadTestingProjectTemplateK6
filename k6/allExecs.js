@@ -1,6 +1,6 @@
 // k6/allExecs.js
 
-import { authentication_ruip } from "../Scripts/NSI_RUIP/NSI_RUIP.js";
+import { authentication } from "../Scripts/HTTP/httpTest.js";
 // Импорт бизнес-функций
 import {
   operationA,
