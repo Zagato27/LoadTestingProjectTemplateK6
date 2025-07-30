@@ -1,9 +1,6 @@
 // k6/main_test.js
 
-<<<<<<< HEAD
 import scenarioConfig from "./Profile/scenario-config.js";
-=======
->>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
 import { mergeConfigs } from "./mergeConfigs.js";
 import { buildScenarios } from "./buildScenarios.js";
 import fs from "fs";
@@ -23,7 +20,6 @@ const stand = __ENV.STAND || "";
 // Разбиваем configPath (например, "config1,config2") в массив
 const configNames = configPath.split(",").map((s) => s.trim()).filter(Boolean);
 
-<<<<<<< HEAD
 for (const name of configNames) {
   switch (name) {
     case "scenario-config":
@@ -32,20 +28,6 @@ for (const name of configNames) {
     default:
       throw new Error(`Unknown config name: ${name}`);
   }
-=======
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-function discoverScenarioFiles() {
-  const dir = path.join(__dirname, "scenario-configs");
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".js"))
-    .reduce((acc, file) => {
-      const name = file.replace(/^scenario-/, "").replace(/\.js$/, "");
-      acc[name] = file;
-      return acc;
-    }, {});
->>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
 }
 
 async function loadScenarioConfigs(names) {
