@@ -1,27 +1,17 @@
 // k6/main_test.js
 
-import scenarioConfig1 from "./scenario-configs/scenario-config1.js";
-import scenarioConfig2 from "./scenario-configs/scenario-config2.js";
+import scenarioConfig from "./Profile/scenario-config.js";
 import { mergeConfigs } from "./mergeConfigs.js";
 import { buildScenarios } from "./buildScenarios.js";
 
-// Импортируем все exec-функции
-import {
-  scr_operationA,
-  scr_operationB,
-  scr_operationC,
-} from "./allExecs.js";
-
 // Экспортируем exec-функции
-export {
-  scr_operationA,
-  scr_operationB,
-  scr_operationC,
-};
+export * from "./allExecs.js";
+
+
 
 // Считываем переменные окружения
-const configPath = __ENV.SCENARIO_CONFIG_PATH || "config1";
-const testType = __ENV.TEST_TYPE || "ramping";
+const configPath = __ENV.SCENARIO_CONFIG_PATH || "scenario-config";
+const testType = __ENV.TEST_TYPE || "debug";
 const stand = __ENV.STAND || "";
 
 // Разбиваем configPath (например, "config1,config2") в массив
@@ -30,11 +20,8 @@ const configsToMerge = [];
 
 for (const name of configNames) {
   switch (name) {
-    case "config1":
-      configsToMerge.push(scenarioConfig1);
-      break;
-    case "config2":
-      configsToMerge.push(scenarioConfig2);
+    case "scenario-config":
+      configsToMerge.push(scenarioConfig);
       break;
     default:
       throw new Error(`Unknown config name: ${name}`);

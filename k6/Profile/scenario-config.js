@@ -1,9 +1,9 @@
-// k6/scenario-configs/scenario-config1.js
+// k6/scenario-configs/scenario-config.js
 
 export default {
     // Название сценария (в вашем «продукте»):
     operationA: {
-      exec: "scr_operationA",
+      exec: "scr_exampleQueryA",
       baseRate: 50,
       startRate: 1,
       timeUnit: "1s",
@@ -11,7 +11,7 @@ export default {
       maxVUs: 100,
     },
     operationB: {
-      exec: "scr_operationB",
+      exec: "scr_exampleQueryB",
       baseRate: 70,
       startRate: 1,
       timeUnit: "1s",

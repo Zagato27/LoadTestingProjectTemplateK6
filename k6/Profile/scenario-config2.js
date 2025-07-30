@@ -2,7 +2,7 @@
 
 export default {
     operationC: {
-      exec: "scr_operationC",
+      exec: "scr_exampleQueryC",
       baseRate: 80,
       startRate: 1,
       timeUnit: "1s",

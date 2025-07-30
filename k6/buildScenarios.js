@@ -1,6 +1,6 @@
 // k6/buildScenarios.js
 
-import { createRampingStages, createStableStages, createPerfStages } from "./stages.js";
+import { createRampingStages, createStableStages, createPerfStages, createDebugStages } from "./stages.js";
 
 export function buildScenarios(config, testType, stand) {
   const scenarios = {};
@@ -41,6 +41,18 @@ export function buildScenarios(config, testType, stand) {
         exec: scenarioData.exec,
         env: { MY_STAND: stand },
       };
+    } else if (testType === "debug") {
+      scenarios[scenarioKey] = {
+        executor: "ramping-arrival-rate",
+        startRate: scenarioData.startRate || 1,
+        timeUnit: scenarioData.timeUnit || "1s",
+        preAllocatedVUs: scenarioData.preAllocatedVUs || 1,
+        maxVUs: scenarioData.maxVUs || 1,
+        stages: createDebugStages(baseRate),
+        exec: scenarioData.exec,
+        env: { MY_STAND: stand },
+      };
+
     } else {
       throw new Error(`Unknown testType: ${testType}`);
     }

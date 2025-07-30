@@ -5,6 +5,8 @@ export default {
     stableTestDuration: "12h",
     // Время для "perf"-теста
     perfTestDuration: "1h",
+    // Время для "debug"-теста
+    perfDebugDuration: "1s",
   
     // Параметры для "ramping"
     incrementPercent: 10,

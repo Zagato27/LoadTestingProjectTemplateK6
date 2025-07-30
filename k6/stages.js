@@ -43,3 +43,11 @@ export function createPerfStages(baseRate) {
     { duration: "1m", target: 0 },
   ];
 }
+
+export function createDebugStages(baseRate) {
+  const { perfDebugDuration } = globalParams;
+  return [
+    { duration: perfDebugDuration, target: baseRate },
+    { duration: "10s", target: 0 },
+  ];
+}

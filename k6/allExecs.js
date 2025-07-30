@@ -1,21 +1,19 @@
 // k6/allExecs.js
 
-import { authentication_ruip } from "../Scripts/NSI_RUIP/NSI_RUIP.js";
 // Импорт бизнес-функций
 import {
-  operationA,
-  operationB,
-  operationC,
+  authentication,
+  exampleQueryA,
+  exampleQueryB,
 } from "../Scripts/HTTP/httpTest.js";
 
 function withAuth(fn) {
   return function () {
-    authentication_ruip();
+    authentication();
     fn();
   };
 }
 
 // Экспортируем exec-функции
-export const scr_operationA = withAuth(operationA);
-export const scr_operationB = withAuth(operationB);
-export const scr_operationC = withAuth(operationC);
+export const scr_exampleQueryA = withAuth(exampleQueryA);
+export const scr_exampleQueryB = withAuth(exampleQueryB);
