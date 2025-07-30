@@ -1,5 +1,9 @@
 // k6/allExecs.js
 
+<<<<<<< HEAD
+=======
+import { authentication } from "../Scripts/HTTP/httpTest.js";
+>>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
 // Импорт бизнес-функций
 import {
   authentication,

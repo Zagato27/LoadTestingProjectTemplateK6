@@ -11,7 +11,7 @@
 - **`k6/allExecs.js`**: exec-функции (scr_...) с логикой авторизации (через `withAuth`).
 - **`k6/buildScenarios.js`**: сборка `options.scenarios` на основе типа теста (`ramping|stable|perf|debug`).
 - **`k6/mergeConfigs.js`**: утилита объединения нескольких конфигов (по списку).
-- **`k6/main_test.js`**: главный скрипт k6, который импортирует все конфиги, собирает scenarios, задаёт thresholds и экспортирует exec-функции.
+- **`k6/main_test.js`**: главный скрипт k6. Автоматически ищет файлы в `k6/scenario-configs`, собирает scenarios, задаёт thresholds и экспортирует exec-функции.
 
 ## Запуск локально
 
@@ -36,13 +36,22 @@ k6 run k6/main_test.js \
 1. Добавить бизнес-логику в k6/Scripts/HTTP/httpTest.js (или другой файл).
 2. Создать exec-функцию в allExecs.js, обёрнутую в withAuth(...).
 3. В каком-нибудь scenario-configX.js прописать:
+<<<<<<< HEAD
 ```js
+=======
+  ```js 
+>>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
    myNewOperation: {
      exec: "scr_myNewOperation",
      baseRate: 80,
      // ...
    }
+<<<<<<< HEAD
 ```   
+=======
+```
+
+>>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
 4. Импортируем все exec-функции из 1 пункта в main_test.js
 5. Запустить, указав нужный SCENARIO_CONFIG_PATH и TEST_TYPE.
 
@@ -74,6 +83,7 @@ export default {
 ```
 
 2. Опишите там свои сценарии.
+<<<<<<< HEAD
 3. В main_test.js добавьте обработку case "configX" и импорт нового файла scenario-configX.js:.
 ```js
 import scenarioConfigX from "./Profile/scenario-configX.js";
@@ -101,8 +111,15 @@ for (const name of configNames) {
 ```bash  
    k6 run k6/Profile/main_test.js --env SCENARIO_CONFIG_PATH="scenario-configX,scenario-configX1"
 ``` 
+=======
+3. Просто укажите `SCENARIO_CONFIG_PATH="configX"` при запуске (можно перечислить несколько имён через запятую).
+4. main_test.js автоматически найдёт нужные файлы и объединит их:
+   
+```bash
+   k6 run k6/Profile/main_test.js --env SCENARIO_CONFIG_PATH="config1,configX"
+  ``` 
+>>>>>>> 3ec1791abfe45f571ad95d19434ae28c739b1c49
 
 ## Поддержка
 
 В случае вопросов по k6 и структуре обращайтесь к документации [k6.io/docs](https://k6.io/docs).
-```
